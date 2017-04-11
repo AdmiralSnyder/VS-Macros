@@ -76,10 +76,10 @@ namespace ExecutionEngine
         private void InitializeCommandHelper()
         {
             var globalProvider = ServiceProvider.GlobalProvider;
-            Validate.IsNotNull(globalProvider, "globalProvider");
+            Validate.IsNotNull(globalProvider, nameof(globalProvider));
 
-            Engine.CommandHelper = new CommandHelper(globalProvider);
-            Validate.IsNotNull(Engine.CommandHelper, "Engine.CommandHelper");
+            CommandHelper = new CommandHelper(globalProvider);
+            Validate.IsNotNull(CommandHelper, nameof(CommandHelper));
         }
 
         internal IActiveScript CreateEngine()

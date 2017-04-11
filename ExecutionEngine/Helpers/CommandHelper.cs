@@ -100,9 +100,9 @@ namespace ExecutionEngine.Helpers
 
         public void DispatchCommandWithArgs(object commandSet, object commandId, ref object pvaIn)
         {
-            Validate.IsNotNull(commandSet, "commandSet");
-            Validate.IsNotNull(commandId, "commandId");
-            Validate.IsNotNull(pvaIn, "pvaIn");
+            Validate.IsNotNull(commandSet, nameof(commandSet));
+            Validate.IsNotNull(commandId, nameof(commandId));
+            Validate.IsNotNull(pvaIn, nameof(pvaIn));
 
             char character = ((string)pvaIn)[0];
             this.DispatchCommandHelper(commandSet, commandId, () => 

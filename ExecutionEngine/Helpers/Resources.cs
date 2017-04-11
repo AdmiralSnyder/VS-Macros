@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace VSMacros.Helpers
+namespace ExecutionEngine.Helpers
 {
     public static class Resources
     {

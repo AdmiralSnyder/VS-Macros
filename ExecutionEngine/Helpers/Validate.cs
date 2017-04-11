@@ -35,7 +35,7 @@ namespace ExecutionEngine
         {
             if (o != null)
             {
-                string message = string.Format(CultureInfo.CurrentUICulture, Resources.ValidateErrorInvalidOperation, paramName);
+                string message = string.Format(CultureInfo.CurrentUICulture, Helpers.Resources.ValidateErrorInvalidOperation, paramName);
                 throw new InvalidOperationException(message);
             }
         }
@@ -50,7 +50,7 @@ namespace ExecutionEngine
         public static void IsNotEmpty(string s, string paramName)
         {
             if (s == string.Empty)
-                throw new ArgumentException(Resources.ValidateErrorStringEmpty, paramName);
+                throw new ArgumentException(Helpers.Resources.ValidateErrorStringEmpty, paramName);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace ExecutionEngine
         public static void IsNotEmpty(Guid g, string paramName)
         {
             if (g == Guid.Empty)
-                throw new ArgumentException(Resources.ValidateErrorGuidEmpty, paramName);
+                throw new ArgumentException(Helpers.Resources.ValidateErrorGuidEmpty, paramName);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace ExecutionEngine
         public static void IsNotWhiteSpace(string s, string paramName)
         {
             if (s != null && string.IsNullOrWhiteSpace(s))
-                throw new ArgumentException(Resources.ValidateErrorStringWhiteSpace, paramName);
+                throw new ArgumentException(Helpers.Resources.ValidateErrorStringWhiteSpace, paramName);
         }
 
         /// <summary>

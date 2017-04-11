@@ -11,6 +11,7 @@ using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.ExecutionEngine.Pipes;
+using System.Windows;
 
 namespace ExecutionEngine
 {
@@ -22,7 +23,7 @@ namespace ExecutionEngine
 
         internal static void RunMacro(string script, int iterations)
         {
-            Validate.IsNotNullAndNotEmpty(script, "script");
+            Validate.IsNotNullAndNotEmpty(script, nameof(script));
             Program.engine.Parse(script);
 
             for (int i = 0; i < iterations; i++)
@@ -76,36 +77,44 @@ namespace ExecutionEngine
         {
             Thread readAndExecuteThread = new Thread(() =>
             {
-                try
-                {
-                    Program.serializer = new BinaryFormatter();
-                    Program.serializer.Binder = new BinderHelper();
-                    Program.engine = new Engine(pid, version);
-
-                    while (true)
-                    {
-                        HandleInput();
-                    }
-                }
-                catch (Exception e)
-                {
-                    if (Client.ClientStream.IsConnected)
-                    {
-                        Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                    }
-                }
-                finally
-                {
-                    if (Client.ClientStream.IsConnected)
-                    {
-                        Client.ShutDownServer(Client.ClientStream);
-                        Client.ClientStream.Close();
-                    }
-                }
+                ReadAndExecute(pid, version);
             });
 
             readAndExecuteThread.SetApartmentState(ApartmentState.STA);
             return readAndExecuteThread;
+        }
+
+        private static void ReadAndExecute(int pid, string version)
+        {
+            try
+            {
+                Program.serializer = new BinaryFormatter();
+                Program.serializer.Binder = new BinderHelper();
+                Program.engine = new Engine(pid, version);
+
+                while (true)
+                {
+                    HandleInput();
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                MessageBox.Show(e.ToString(), $"Error in {nameof(ReadAndExecute)}");
+#endif
+                if (Client.ClientStream.IsConnected)
+                {
+                    Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                }
+            }
+            finally
+            {
+                if (Client.ClientStream.IsConnected)
+                {
+                    Client.ShutDownServer(Client.ClientStream);
+                    Client.ClientStream.Close();
+                }
+            }
         }
 
         private static void RunFromPipe(string[] separatedArgs)
@@ -122,6 +131,7 @@ namespace ExecutionEngine
 
         internal static void Main(string[] args)
         {
+            System.Windows.Forms.MessageBox.Show("Entering");
             try
             {
                 string[] separatedArgs = InputParser.SeparateArgs(args);
@@ -129,6 +139,9 @@ namespace ExecutionEngine
             }
             catch (Exception e)
             {
+#if DEBUG
+                MessageBox.Show(e.ToString(), $"Error in {nameof(Main)}");
+#endif
                 Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
             }
         }

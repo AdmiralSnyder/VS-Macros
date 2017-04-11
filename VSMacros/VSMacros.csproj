@@ -8,6 +8,7 @@
     <DeployExtension>false</DeployExtension>
     <CreateVsixContainer>false</CreateVsixContainer>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -23,7 +24,7 @@
     <AssemblyOriginatorKeyFile Condition="'$(SignKey)' == ''">Key.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyFile Condition="'$(SignKey)' != ''">$(SignKey)</AssemblyOriginatorKeyFile>
     <DelaySign Condition="'$(SignKey)' != ''">True</DelaySign>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -211,7 +212,6 @@
     <Compile Include="FileChangeMonitor.cs" />
     <Compile Include="Helpers\JobHandle.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
-    <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Content Include="Resources\folderclosed.png" />
     <Content Include="Resources\folderopened.png" />
