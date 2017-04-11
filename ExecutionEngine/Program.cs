@@ -12,6 +12,9 @@ using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.ExecutionEngine.Pipes;
 using System.Windows;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 
 namespace ExecutionEngine
 {
@@ -122,16 +125,21 @@ namespace ExecutionEngine
             Guid guid = InputParser.GetGuid(separatedArgs[0]);
             Client.InitializePipeClientStream(guid);
 
-            int pid = InputParser.GetPid(separatedArgs[1]);
+            DevenvPID = InputParser.GetPid(separatedArgs[1]);
             string version = separatedArgs[2];
 
-            Thread readAndExecuteThread = CreateReadingExecutingThread(pid, version);
+            Thread readAndExecuteThread = CreateReadingExecutingThread(DevenvPID, version);
             readAndExecuteThread.Start();
         }
 
+        private static int DevenvPID;
+
         internal static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+#if DEBUG
             System.Windows.Forms.MessageBox.Show("Entering");
+#endif
             try
             {
                 string[] separatedArgs = InputParser.SeparateArgs(args);
@@ -144,6 +152,25 @@ namespace ExecutionEngine
 #endif
                 Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
             }
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            // somehow we are asked for a .resources file... just return null.
+            if (args.Name.StartsWith("VisualStudio.Macros.ExecutionEngine"))
+            {
+                return null;
+            }
+
+            // get full devenv path. DevenvPID is the PID we parsed from the command line in Main.
+            var devenvFileName = Process.GetProcessById(DevenvPID).MainModule.FileName;
+
+            return Assembly.LoadFrom(Path.Combine(
+                Path.GetDirectoryName(devenvFileName), 
+                "PublicAssemblies", 
+                args.Name.Split(',')[0] + ".dll")); // better not just split...
+            // args.Name is "Microsoft.VisualStudio.Shell.15.0, PublicKeyToken... and so on"
+            
         }
     }
 }
